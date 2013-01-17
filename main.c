@@ -124,6 +124,18 @@ int main(int argc, char *argv[]) {
     openlog("watchdogd", LOG_PERROR | LOG_PID, LOG_DAEMON);
   }
 
+  if(pidfile) {
+    FILE *file = fopen(pidfile, "w");
+    if(file == NULL) {
+      syslog(LOG_CRIT, "unable to create pidfile: %s", strerror(errno));
+
+      return 1;
+    }
+
+    fprintf(file, "%d\n", getpid());
+    fclose(file);
+  }
+
   if(optind == argc) {
     syslog(LOG_ERR, "driver must be specified");
 
